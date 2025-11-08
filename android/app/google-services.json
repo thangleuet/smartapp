@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1080317807087",
+    "firebase_url": "https://todosmart-c28d5-default-rtdb.firebaseio.com",
+    "project_id": "todosmart-c28d5",
+    "storage_bucket": "todosmart-c28d5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080317807087:android:d733cfe9300b850fe7ce1a",
+        "android_client_info": {
+          "package_name": "com.example.smart_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1080317807087-8j6uumorcd4mp1sgccggpmfl63dpgbns.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUC4vV8aQKd4R4O3iyvWAa-vYTepgY1Ww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1080317807087-8j6uumorcd4mp1sgccggpmfl63dpgbns.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1080317807087-0g52nlpda2dccu4vb88np6bkj8kust4p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
