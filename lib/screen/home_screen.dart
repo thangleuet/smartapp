@@ -12,7 +12,9 @@ import 'package:phonekit_manager/screen/setting_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:phonekit_manager/screen/consum_screen.dart';
+import 'package:phonekit_manager/screen/phone_manage_screen.dart';
 import 'dart:async';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   final String name_shop;
@@ -800,11 +802,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(15),
                         child: const Icon(Icons.store_rounded,
-                            color: Colors.white, size: 24),
+                            color: Colors.white, size: 30),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 15),
                     ],
                   ),
 
@@ -813,15 +815,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.qr_code_scanner_rounded,
-                            color: Colors.white),
+                            color: Colors.white, size: 30),
+                        iconSize: 40.0,
                         onPressed: () {
                           scanQR();
                         },
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 10),
                       IconButton(
-                        icon: Icon(Icons.money_outlined),
-                        iconSize: 25.0,
+                        icon: Icon(Icons.money_outlined,
+                            color: Colors.white, size: 30),
+                        iconSize: 40.0,
                         color: Colors.white,
                         onPressed: () => {
                           Navigator.push(
@@ -832,9 +836,26 @@ class _HomeScreenState extends State<HomeScreen> {
                               ))
                         },
                       ),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: Icon(Icons.phone_android_rounded,
+                            color: Colors.white, size: 30),
+                        iconSize: 40.0,
+                        color: Colors.white,
+                        onPressed: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PhoneManager(widget.name_shop,
+                                    widget.current_email, widget.current_role),
+                              ))
+                        },
+                      ),
+                      const SizedBox(width: 10),
                       IconButton(
                         icon: const Icon(Icons.bar_chart_rounded,
-                            color: Colors.white),
+                            color: Colors.white, size: 30),
+                        iconSize: 40.0,
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -845,10 +866,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 10),
                       IconButton(
                         icon: const Icon(Icons.receipt_long_rounded,
-                            color: Colors.white),
+                            color: Colors.white, size: 30),
+                        iconSize: 40.0,
                         onPressed: () {
                           // logic gốc báo cáo
                           Navigator.push(

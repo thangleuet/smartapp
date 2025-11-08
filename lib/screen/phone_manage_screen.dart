@@ -4,26 +4,26 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:phonekit_manager/model/comsum_model.dart';
+import 'package:phonekit_manager/model/phone_manage_model.dart';
 
-class Consumer extends StatefulWidget {
+class PhoneManager extends StatefulWidget {
   final String current_shop;
   final String current_email;
   final String current_role;
 
-  const Consumer(this.current_shop, this.current_email, this.current_role,
+  const PhoneManager(this.current_shop, this.current_email, this.current_role,
       {Key? key})
       : super(key: key);
 
   @override
-  _ConsumerState createState() => _ConsumerState();
+  _PhoneManagerState createState() => _PhoneManagerState();
 }
 
-class _ConsumerState extends State<Consumer> {
-  late Future<List<ComsumModel>> _taskList;
-  List<ComsumModel> _filteredData = [];
-  List<ComsumModel> _taskListData = [];
-  List<ComsumModel> _monthDataList = [];
+class _PhoneManagerState extends State<PhoneManager> {
+  late Future<List<PhoneModel>> _taskList;
+  List<PhoneModel> _filteredData = [];
+  List<PhoneModel> _taskListData = [];
+  List<PhoneModel> _monthDataList = [];
   bool isDay = true;
   DateTime _selectedDate = DateTime.now();
   double existingGiaNhap = 0.0;
@@ -41,9 +41,9 @@ class _ConsumerState extends State<Consumer> {
   }
 
   // ───────────── FIRESTORE ─────────────
-  Future<void> sendDataFireStore(ComsumModel task) async {
+  Future<void> sendDataFireStore(PhoneModel task) async {
     String unique_id = UniqueKey().toString();
-    ComsumModel newTask = ComsumModel(
+    PhoneModel newTask = PhoneModel(
       id: unique_id,
       name: task.name,
       thu: task.thu,
@@ -53,25 +53,29 @@ class _ConsumerState extends State<Consumer> {
     );
 
     await FirebaseFirestore.instance
-        .collection('consum')
+        .collection('phonedevice')
         .doc(unique_id)
         .set(newTask.toMap());
   }
 
-  Future<void> updateDataconsumFireStore(String id, ComsumModel task) async {
+  Future<void> updateDataphonedeviceFireStore(
+      String id, PhoneModel task) async {
     await FirebaseFirestore.instance
-        .collection('consum')
+        .collection('phonedevice')
         .doc(id)
         .update(task.toMap());
   }
 
-  Future<void> deleteTask(ComsumModel task) async {
-    await FirebaseFirestore.instance.collection('consum').doc(task.id).delete();
+  Future<void> deleteTask(PhoneModel task) async {
+    await FirebaseFirestore.instance
+        .collection('phonedevice')
+        .doc(task.id)
+        .delete();
   }
 
-  Future<List<ComsumModel>> getDataconsumfireStore() async {
+  Future<List<PhoneModel>> getDataphonedevicefireStore() async {
     CollectionReference collectionRef =
-        FirebaseFirestore.instance.collection('consum');
+        FirebaseFirestore.instance.collection('phonedevice');
 
     DateTime startDate =
         DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
@@ -83,8 +87,8 @@ class _ConsumerState extends State<Consumer> {
         .orderBy('date')
         .get();
 
-    List<ComsumModel> dataDay = querySnapshot.docs
-        .map((doc) => ComsumModel.fromMap(doc.data() as Map<String, dynamic>))
+    List<PhoneModel> dataDay = querySnapshot.docs
+        .map((doc) => PhoneModel.fromMap(doc.data() as Map<String, dynamic>))
         .where((task) => task.shop == widget.current_shop)
         .toList();
 
@@ -93,9 +97,9 @@ class _ConsumerState extends State<Consumer> {
     return dataDay;
   }
 
-  Future<List<ComsumModel>> getDataconsumfireStoreMonth() async {
+  Future<List<PhoneModel>> getDataphonedevicefireStoreMonth() async {
     CollectionReference collectionRef =
-        FirebaseFirestore.instance.collection('consum');
+        FirebaseFirestore.instance.collection('phonedevice');
 
     DateTime startMonth = DateTime(_selectedDate.year, _selectedDate.month, 1);
     DateTime endMonth =
@@ -107,8 +111,8 @@ class _ConsumerState extends State<Consumer> {
         .orderBy('date')
         .get();
 
-    List<ComsumModel> dataMonth = querySnapshot.docs
-        .map((doc) => ComsumModel.fromMap(doc.data() as Map<String, dynamic>))
+    List<PhoneModel> dataMonth = querySnapshot.docs
+        .map((doc) => PhoneModel.fromMap(doc.data() as Map<String, dynamic>))
         .where((task) => task.shop == widget.current_shop)
         .toList();
 
@@ -116,12 +120,12 @@ class _ConsumerState extends State<Consumer> {
     return _monthDataList;
   }
 
-  List<ComsumModel> sumMoneyMonth(List<ComsumModel> filteredData) {
-    Map<String, ComsumModel> monthDataMap = {};
-    for (ComsumModel t in filteredData) {
+  List<PhoneModel> sumMoneyMonth(List<PhoneModel> filteredData) {
+    Map<String, PhoneModel> monthDataMap = {};
+    for (PhoneModel t in filteredData) {
       String monthKey = '${t.date.year}-${t.date.month}';
       if (monthDataMap.containsKey(monthKey)) {
-        ComsumModel? existingMonthData = monthDataMap[monthKey];
+        PhoneModel? existingMonthData = monthDataMap[monthKey];
         existingGiaNhap = double.tryParse(existingMonthData?.chi ?? "0") ?? 0;
         existingGiaBan = double.tryParse(existingMonthData?.thu ?? "0") ?? 0;
         double giaNhap = double.tryParse(t.chi) ?? 0;
@@ -129,7 +133,7 @@ class _ConsumerState extends State<Consumer> {
         existingMonthData?.chi = (existingGiaNhap + giaNhap).toStringAsFixed(2);
         existingMonthData?.thu = (existingGiaBan + giaBan).toStringAsFixed(2);
       } else {
-        monthDataMap[monthKey] = ComsumModel(
+        monthDataMap[monthKey] = PhoneModel(
           id: monthKey,
           chi: t.chi,
           thu: t.thu,
@@ -145,9 +149,9 @@ class _ConsumerState extends State<Consumer> {
   // ───────────── UPDATE LIST ─────────────
   Future<void> _updateTaskList() async {
     if (isDay) {
-      await getDataconsumfireStore();
+      await getDataphonedevicefireStore();
     } else {
-      await getDataconsumfireStoreMonth();
+      await getDataphonedevicefireStoreMonth();
     }
     setState(() {});
   }
@@ -155,7 +159,7 @@ class _ConsumerState extends State<Consumer> {
   void updateFilteredData(bool dayMode) async {
     isDay = dayMode;
     if (!isDay) {
-      await getDataconsumfireStoreMonth();
+      await getDataphonedevicefireStoreMonth();
       _filteredData = _monthDataList
           .where((task) => task.date.month == _selectedDate.month)
           .toList();
@@ -168,7 +172,7 @@ class _ConsumerState extends State<Consumer> {
   }
 
   // ───────────── DIALOG ADD/EDIT ─────────────
-  void _showDialogDaily(BuildContext context, bool isEdit, ComsumModel task) {
+  void _showDialogDaily(BuildContext context, bool isEdit, PhoneModel task) {
     _name = isEdit ? task.name : "";
     _thu = isEdit ? task.thu : "0";
     _chi = isEdit ? task.chi : "0";
@@ -177,7 +181,7 @@ class _ConsumerState extends State<Consumer> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("Tiền thu chi",
+        title: const Text("Giao dịch điện thoại",
             style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -188,10 +192,10 @@ class _ConsumerState extends State<Consumer> {
             children: [
               _buildTextField("Tên", _name, (v) => _name = v),
               const SizedBox(height: 12),
-              _buildTextField("Số tiền chi", _chi, (v) => _chi = v,
+              _buildTextField("Giá nhập", _chi, (v) => _chi = v,
                   isNumber: true),
               const SizedBox(height: 12),
-              _buildTextField("Số tiền thu ngoài", _thu, (v) => _thu = v,
+              _buildTextField("Giá bán", _thu, (v) => _thu = v,
                   isNumber: true),
             ],
           ),
@@ -207,7 +211,7 @@ class _ConsumerState extends State<Consumer> {
           ),
           TextButton(
             onPressed: () async {
-              ComsumModel newTask = ComsumModel(
+              PhoneModel newTask = PhoneModel(
                 id: isEdit ? task.id : '',
                 name: _name,
                 thu: _thu,
@@ -216,7 +220,7 @@ class _ConsumerState extends State<Consumer> {
                 shop: widget.current_shop,
               );
               if (isEdit) {
-                await updateDataconsumFireStore(task.id, newTask);
+                await updateDataphonedeviceFireStore(task.id, newTask);
               } else {
                 await sendDataFireStore(newTask);
               }
@@ -292,7 +296,7 @@ class _ConsumerState extends State<Consumer> {
         onPressed: () => _showDialogDaily(
           context,
           false,
-          ComsumModel(
+          PhoneModel(
               id: '',
               name: '',
               thu: '0',
@@ -408,7 +412,7 @@ class _ConsumerState extends State<Consumer> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Doanh thu phụ kiện",
+          const Text("Doanh số mua bán điện thoại",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 12),
           SizedBox(
@@ -487,7 +491,7 @@ class _ConsumerState extends State<Consumer> {
     );
   }
 
-  Widget _buildTransactionCard(ComsumModel task) {
+  Widget _buildTransactionCard(PhoneModel task) {
     return GestureDetector(
       onTap: () => _showDialogDaily(context, true, task),
       child: Container(
