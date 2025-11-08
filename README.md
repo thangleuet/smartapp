@@ -1,4 +1,4 @@
-# smart_app
+# phonekit_manager
 
 A new Flutter project.
 
